@@ -37,3 +37,8 @@ You will learn how to use Jasmine to write a number of tests against a pre-exist
 12. Write a test that ensures when the loadFeed function is called and completes its work, there is at least a single .entry element within the .feed container. Remember, loadFeed() is asynchronous so this test wil require the use of Jasmine's beforeEach and asynchronous done() function.
 13. Write a test that ensures when a new feed is loaded by the loadFeed function that the content actually changes. Remember, loadFeed() is asynchronous.
 14. When complete - all of your tests should pass.
+
+
+# How to run the project
+1. Clone [required project assets](http://github.com/jdiii/frontend-nanodegree-feedreader).
+2. Open index.html in a browser to view the feedreader and test runner.
