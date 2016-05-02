@@ -36,6 +36,8 @@ $(function() {
          it('has a url for all feeds', function(){
              allFeeds.forEach(function(f){
                  expect(f.url).toBeDefined();
+                 expect(f.url.length).not.toBe(0);
+                 expect(typeof f.url).toBe('string');
              });
          });
 
@@ -43,10 +45,15 @@ $(function() {
         /* DONE: Write a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
          * and that the name is not empty.
+         *
+         * Added a check for the type to be string
+         * since defined w/ length could imply array or object
          */
          it('has a name for all feeds', function(){
              allFeeds.forEach(function(f){
                  expect(f.name).toBeDefined();
+                 expect(f.name.length).not.toBe(0);
+                 expect(typeof f.name).toBe('string');
              });
          });
 
@@ -63,14 +70,13 @@ $(function() {
          * the CSS to determine how we're performing the
          * hiding/showing of the menu element.
          *
-         * Checking for the menu-hidden class + menu offset is offscreen
+         * Checking for the menu-hidden class
          */
          it('is hidden by default', function(){
 
              var menu = $('.slide-menu');
 
-             expect(menu.parents().hasClass('menu-hidden')).toBe(true);
-             expect(menu.offset().left).toBeLessThan(0);
+             expect(menu.parents().hasClass('menu-hidden')).toBeTruthy();
 
          });
 
@@ -84,24 +90,20 @@ $(function() {
           it('toggles visibility when clicked', function(){
               //because the selector to show/hide is ".menu-hidden .slide-menu",
               // I'm going to test for some parent of the menu having .menu-hidden
-              var menu = $('.slide-menu');
-              var link = $('.menu-icon-link');
+              var menu = $('.slide-menu'), link = $('.menu-icon-link');
 
               link.click();
-              expect(menu.parents().hasClass('menu-hidden')).toBe(false);
+              expect(menu.parents().hasClass('menu-hidden')).toBeFalsy();
               link.click();
-              expect(menu.parents().hasClass('menu-hidden')).toBe(true);
+              expect(menu.parents().hasClass('menu-hidden')).toBeTruthy();
           });
       });
 
     /* DONE: Write a new test suite named "Initial Entries" */
     describe('Initial entries', function(){
 
-        /* use a 2-sec window for the async call to complete */
         beforeEach(function(done){
-            setTimeout(function(){
-                done();
-            }, 2000);
+            done();
         });
 
         /* DONE: Write a test that ensures when the loadFeed
@@ -109,41 +111,56 @@ $(function() {
          * a single .entry element within the .feed container.
          * Remember, loadFeed() is asynchronous so this test will require
          * the use of Jasmine's beforeEach and asynchronous done() function.
-         *
-         * I think the ^^instructions^^ could refer to either testing init(),
-         * which calls loadFeed(0) when the app starts, or testing loadFeed in general.
-         * I went with the former...
          */
         it('appear in the .feed', function(done){
-            expect($('.feed').find('.entry').length).toBeGreaterThan(0);
-            done();
+
+            //load a random feed and see if it generates entries in the feed
+            var feed = Math.floor(Math.random() * 3.9999);
+            loadFeed(feed, function(){
+                expect($('.feed .entry').length).toBeGreaterThan(0);
+                done();
+            });
+
         });
+
     });
 
     /* DONE: Write a new test suite named "New Feed Selection" */
     describe('New feed selection', function(){
 
-        /*
-        * In this case no setTimeout is needed because I can call done() in a callback
-        */
         beforeEach(function(done){
+            jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
             done();
         });
 
         /* DONE: Write a test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          * Remember, loadFeed() is asynchronous.
-         *
-         * Use a random number to change the feed ID to anything but 0
-         * which is the initial feed.
          */
+
+         //load 2 different random feeds
+         //compare the html strings for inequality
          it('loads new content', function(done){
-             var origContent = $('.feed').html();
-             var randNum = Math.floor( 2.9999 * Math.random() + 1 );
-             loadFeed(randNum, function(){
-                 expect($('.feed').html()).not.toBe(origContent);
-                 done();
+
+             var feeds = [0,1,2,3],
+                feed1 = feeds.splice(Math.floor(Math.random() * 3.9999), 1),
+                feed2 = feeds.splice(Math.floor(Math.random() * 2.9999), 1),
+                html1, html2;
+
+
+             loadFeed(feed1, function(){
+                 html1 = $('.feed').html();
+
+                 loadFeed(feed2, function(){
+
+                     html2 = $('.feed').html();
+                     expect(html2).not.toBe(html1);
+                     done();
+
+                 });
+
              });
+
          });
 
 
